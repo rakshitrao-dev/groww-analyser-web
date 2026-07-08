@@ -20,13 +20,41 @@ function initializeApp() {
     const resultArea = document.getElementById('resultArea');
     const suggestionList = document.getElementById('suggestionList');
     const tabBtns = document.querySelectorAll('.tab-btn');
+    const themeToggle = document.getElementById('themeToggle');
+    const stockCountBadge = document.getElementById('stockCountBadge');
+    const statStocks = document.getElementById('statStocks');
+    const statPages = document.getElementById('statPages');
+    const watchlistEmpty = document.getElementById('watchlistEmpty');
+    const fileLabel = document.getElementById('fileLabel');
+
+    // ============================================================
+    // THEME TOGGLE
+    // ============================================================
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeToggle.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+
+    themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
+    });
+
+    // File input label update
+    if (pdfInput && fileLabel) {
+        pdfInput.addEventListener('change', () => {
+            fileLabel.textContent = pdfInput.files[0] ? pdfInput.files[0].name : 'No file selected';
+        });
+    }
 
     let allInstruments = [];
     let selectedGrowwID = '';
     let currentActiveListId = 'list1';
 
     // ============================================================
-    // 1. STATE & STORAGE (localStorage replaces chrome.storage)
+    // 1. STATE & STORAGE
     // ============================================================
     function getMultiWatchlist() {
         return JSON.parse(localStorage.getItem('multiWatchlist')) || {
@@ -149,13 +177,32 @@ function initializeApp() {
 
     function renderList(list) {
         watchlistUl.innerHTML = '';
+        const count = list.length;
+
+        if (watchlistEmpty) watchlistEmpty.style.display = count === 0 ? 'flex' : 'none';
+        if (stockCountBadge) stockCountBadge.textContent = `${count} stock${count !== 1 ? 's' : ''}`;
+        if (statStocks) statStocks.textContent = count;
+        if (statPages) statPages.textContent = count * 6; // 6 pages per stock
+
         list.forEach(slug => {
             const li = document.createElement('li');
-            li.textContent = slug;
-            const remove = document.createElement('span');
-            remove.textContent = 'X';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'stock-slug';
+            nameSpan.textContent = slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+            const tagSpan = document.createElement('span');
+            tagSpan.className = 'stock-name';
+            tagSpan.textContent = slug.split('-').slice(-2, -1)[0]?.toUpperCase() || 'NSE';
+
+            const remove = document.createElement('button');
+            remove.innerHTML = '✕';
             remove.className = 'remove-btn';
+            remove.title = 'Remove';
             remove.onclick = () => removeCompany(slug);
+
+            li.appendChild(nameSpan);
+            li.appendChild(tagSpan);
             li.appendChild(remove);
             watchlistUl.appendChild(li);
         });
@@ -193,21 +240,21 @@ function initializeApp() {
     // ============================================================
     downloadBtn.addEventListener('click', async () => {
         downloadBtn.disabled = true;
-        serverStatusDiv.textContent = 'Checking server...';
+        serverStatusDiv.innerHTML = '<span class="spinner"></span> Checking server...';
 
         try {
             const healthRes = await fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(5000) });
             if (!healthRes.ok) throw new Error('not ok');
-            serverStatusDiv.textContent = '';
+            serverStatusDiv.innerHTML = '';
         } catch {
-            serverStatusDiv.textContent = 'Waking up server (may take ~30 seconds)...';
+            serverStatusDiv.innerHTML = '<span class="spinner"></span> Waking up server (~30 seconds)...';
             try {
                 await waitForServer(60000);
-                serverStatusDiv.textContent = 'Server ready!';
+                serverStatusDiv.innerHTML = '✅ Server ready!';
                 await new Promise(r => setTimeout(r, 800));
-                serverStatusDiv.textContent = '';
+                serverStatusDiv.innerHTML = '';
             } catch (e) {
-                serverStatusDiv.textContent = e.message;
+                serverStatusDiv.innerHTML = '❌ ' + e.message;
                 downloadBtn.disabled = false;
                 return;
             }
