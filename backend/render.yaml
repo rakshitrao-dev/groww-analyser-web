@@ -7,7 +7,15 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     envVars:
-      - key: ALLOWED_ORIGINS
-        value: https://your-frontend.vercel.app
       - key: NODE_ENV
         value: production
+      - key: ALLOWED_ORIGINS
+        value: https://groww-analyser-web.vercel.app
+      - key: MONGO_URI
+        value: mongodb+srv://growwapp:GrowwApp2026!@growwcluster.oskol6i.mongodb.net/growwdb?retryWrites=true&w=majority
+      - key: JWT_SECRET
+        value: groww-jwt-super-secret-2026-xK9mP2qR
+      - key: ADMIN_USER
+        value: rakshitrao@yahoo.in
+      - key: ADMIN_PASS
+        value: Rakshit@Admin2026

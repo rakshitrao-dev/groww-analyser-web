@@ -19,7 +19,9 @@
     </div>
     <div class="topbar-actions">
       <span class="topbar-badge">Gemini 2.5 Flash</span>
+      <span class="user-greeting" id="userGreeting" style="font-size:12px;color:var(--text-muted);display:none"></span>
       <button class="theme-toggle" id="themeToggle" title="Toggle theme">🌙</button>
+      <button class="theme-toggle" id="logoutBtn" title="Sign out" style="display:none;font-size:14px">↩</button>
     </div>
   </header>
 
@@ -33,13 +35,17 @@
           <span class="icon">📋</span> Watchlist
           <span class="stock-count-badge" id="stockCountBadge">0 stocks</span>
         </div>
+        <span id="syncStatus" style="font-size:11px;color:var(--text-muted)"></span>
       </div>
 
-      <!-- Watchlist tabs -->
+      <!-- 6 Watchlist tabs -->
       <div class="watchlist-selector">
-        <button class="tab-btn active" data-list="list1">Watchlist 1</button>
-        <button class="tab-btn" data-list="list2">Watchlist 2</button>
-        <button class="tab-btn" data-list="list3">Watchlist 3</button>
+        <button class="tab-btn active" data-list="list1">W1</button>
+        <button class="tab-btn" data-list="list2">W2</button>
+        <button class="tab-btn" data-list="list3">W3</button>
+        <button class="tab-btn" data-list="list4">W4</button>
+        <button class="tab-btn" data-list="list5">W5</button>
+        <button class="tab-btn" data-list="list6">W6</button>
       </div>
 
       <!-- Category label -->
