@@ -1,11 +1,8 @@
 const BACKEND_URL = 'https://groww-scraper-api.onrender.com';
 
-// ── AUTH GUARD ────────────────────────────────────────────────────────────────
+// Auth token — guaranteed present by the <head> guard in index.html
 const authToken = localStorage.getItem('authToken');
 const authUser  = JSON.parse(localStorage.getItem('authUser') || 'null');
-if (!authToken || !authUser) {
-    window.location.href = 'auth.html';
-}
 
 document.addEventListener('DOMContentLoaded', () => initializeApp());
 
