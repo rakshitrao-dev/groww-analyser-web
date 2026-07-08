@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: groww-scraper-api
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://your-frontend.vercel.app
+      - key: NODE_ENV
+        value: production
